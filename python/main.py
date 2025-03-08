@@ -88,10 +88,10 @@ def add_item(
 
     if image != None:
         # print(image)
-        image_hash = hash_image(image)
+        image = hash_image(image)
 
     insert_item(Item(name=name, category=category, image=image))
-    return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={image_hash}"})
+    return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={image}"})
 
 @app.get("/items")
 def get_items():
@@ -182,4 +182,4 @@ def hash_image(image):
         except:
             raise HTTPException(status_code=400, detail="Image not found")
         image_hash = hashlib.sha256(image_bytes).hexdigest()
-    return image_hash
+    return image_hash + ".jpg"
