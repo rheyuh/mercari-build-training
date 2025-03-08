@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(50) NOT NULL,
+    category_id INTEGER NOT NULL,
+    image VARCHAR(255),
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
