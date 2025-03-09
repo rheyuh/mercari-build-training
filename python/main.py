@@ -122,7 +122,7 @@ def add_item(
     
     logger.info("Image hashed")
 
-    insert_item_json(Item(name=name, category=category, image=image))
+    # insert_item_json(Item(name=name, category=category, image=image))
     insert_item_db(db, Item(name=name, category=category, image=image))
     
     return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={image}"})
