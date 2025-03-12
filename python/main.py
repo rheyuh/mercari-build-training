@@ -57,7 +57,7 @@ logger = logging.getLogger("uvicorn")
 # change logger level to display varying levels of logs displayed on console
 logger.level = logging.DEBUG
 images = pathlib.Path(__file__).parent.resolve() / "images"
-origins = [os.environ.get("FRONT_URL", "http://0.0.0.0:3000")]
+origins = [os.environ.get("FRONT_URL", "http://localhost:3000")]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
