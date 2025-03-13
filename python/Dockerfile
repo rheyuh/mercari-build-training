@@ -9,7 +9,7 @@ COPY . src
 
 RUN cd src
 RUN addgroup -S mercari && adduser -S trainee -G mercari
-RUN chown -R trainee:mercari src/db
+RUN chown -R trainee:mercari src/db && chown -R trainee:mercari src/images
 RUN python3 -m venv /app/venv
 
 # Set path to use the virtual environment
@@ -26,3 +26,4 @@ USER trainee
 # CMD ["ls", "src"]
 WORKDIR src
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--reload", "--port", "9000"]
+#"--workers", "1"

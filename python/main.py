@@ -2,7 +2,7 @@ import os
 import logging
 import pathlib
 from typing import List
-from fastapi import FastAPI, Form, HTTPException, Depends
+from fastapi import FastAPI, Form, HTTPException, Depends, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from contextlib import asynccontextmanager
 import json
 import hashlib
+import shutil
 
 
 # Define the path to the images & sqlite3 database
@@ -21,7 +22,7 @@ def get_db():
     if not db.exists():
         yield
 
-    conn = sqlite3.connect(db)
+    conn = sqlite3.connect(db, check_same_thread=False)
     conn.row_factory = sqlite3.Row  # Return rows as dictionaries
     try:
         yield conn
@@ -60,7 +61,7 @@ images = pathlib.Path(__file__).parent.resolve() / "images"
 origins = [os.environ.get("FRONT_URL", "http://localhost:3000")]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins="*",
     allow_credentials=False,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
@@ -102,7 +103,7 @@ def add_item(
     name: str = Form(...),
     category: str = Form(...),
     # Form(None) for non-required fields
-    image: str | None = Form(None),
+    image: UploadFile = File(...),
     
     db: sqlite3.Connection = Depends(get_db),
 ):
@@ -116,9 +117,13 @@ def add_item(
         raise HTTPException(status_code=400, detail="category is required")
 
     logger.info("About to hash image")
-
+    
     if image != None:
-        image = hash_image(image)
+        file_path = f"images/{image.filename}"
+
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(image.file, buffer)
+            image = hash_image(file_path)
     
     logger.info("Image hashed")
 
