@@ -32,7 +32,7 @@ export const Listing = ({ onListingCompleted }: Prop) => {
     });
   };
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    // event.preventDefault();
     postItem({
       name: values.name,
       category: values.category,
