@@ -79,7 +79,7 @@ def hello():
 class Item(BaseModel):
     name: str
     category: str
-    image: str | None
+    image: str
 
     @staticmethod
     def from_row(row):
@@ -99,7 +99,7 @@ class GetItemResponse(BaseModel):
 
 # add_item is a handler to add a new item for POST /items .
 @app.post("/items", response_model=AddItemResponse)
-def add_item(
+async def add_item(
     name: str = Form(...),
     category: str = Form(...),
     # Form(None) for non-required fields
@@ -119,18 +119,14 @@ def add_item(
     logger.info("About to hash image")
     
     if image != None:
-        file_path = f"images/{image.filename}"
-
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(image.file, buffer)
-            image = hash_image(file_path)
+        hashed_image = await hash_image(image)
     
     logger.info("Image hashed")
 
     # insert_item_json(Item(name=name, category=category, image=image))
-    insert_item_db(db, Item(name=name, category=category, image=image))
+    insert_item_db(db, Item(name=name, category=category, image=hashed_image))
     
-    return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={image}"})
+    return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={hashed_image}"})
 
 @app.get("/items", response_model=GetItemResponse)
 def get_items(db: sqlite3.Connection = Depends(get_db)):
@@ -258,14 +254,18 @@ def insert_item_db(db, item: Item):
     db.commit()
 
 
-def hash_image(image):
-    with open(image, "rb") as f:
-        try:
-            image_bytes = f.read()
-        except:
-            raise HTTPException(status_code=400, detail="Image not found")
-        image_hash = hashlib.sha256(image_bytes).hexdigest()
-        image_hash = image_hash + ".jpg"
+async def hash_image(image):
+    # with open(image, "rb") as f:
+    #     try:
+    #         image_bytes = f.read()
+    #     except:
+    #         raise HTTPException(status_code=400, detail="Image not found")
+    image_bytes = await image.read()
+    image_hash = hashlib.sha256(image_bytes).hexdigest()
+    image_hash = image_hash + ".jpg"
+    file_path = f"images/{image_hash}"
+    with open(file_path, "wb") as buffer:
+        buffer.write(image_bytes)
     return image_hash
 
     # test
