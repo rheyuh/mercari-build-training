@@ -4,7 +4,7 @@ export interface Item {
   id: number;
   name: string;
   category: string;
-  image_name: string;
+  image: string;
 }
 
 export interface ItemListResponse {

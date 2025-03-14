@@ -32,7 +32,7 @@ export const Listing = ({ onListingCompleted }: Prop) => {
     });
   };
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    // event.preventDefault();
     postItem({
       name: values.name,
       category: values.category,
@@ -40,7 +40,7 @@ export const Listing = ({ onListingCompleted }: Prop) => {
     })
       .catch((error) => {
         console.error('POST error:', error);
-        alert('Failed to list this item');
+        // alert('Failed to list this item');
       })
       .finally(() => {
         onListingCompleted();
