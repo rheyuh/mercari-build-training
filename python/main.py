@@ -123,6 +123,7 @@ async def add_item(
     
     logger.info("Image hashed")
 
+
     # insert_item_json(Item(name=name, category=category, image=image))
     insert_item_db(db, Item(name=name, category=category, image=hashed_image))
     
@@ -235,7 +236,6 @@ def insert_item_json(item: Item):
 
     with open('items.json', 'w') as json_file:
         json.dump(data, json_file, indent=4)    
-
 
 def insert_item_db(db, item: Item):
     cur = db.cursor()
