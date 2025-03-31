@@ -115,12 +115,16 @@ def add_item(
     if not category:
         raise HTTPException(status_code=400, detail="category is required")
 
+    logger.info("About to hash image")
 
     if image != None:
-        # print(image)
         image = hash_image(image)
+    
+    logger.info("Image hashed")
 
-    insert_item(Item(name=name, category=category, image=image))
+    # insert_item_json(Item(name=name, category=category, image=image))
+    insert_item_db(db, Item(name=name, category=category, image=image))
+    
     return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={image}"})
 
     # insert_item_json(Item(name=name, category=category, image=image))
