@@ -127,6 +127,11 @@ def add_item(
     
     return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={image}"})
 
+    # insert_item_json(Item(name=name, category=category, image=image))
+    insert_item_db(db, Item(name=name, category=category, image=image))
+    
+    return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={image}"})
+
 @app.get("/items", response_model=GetItemResponse)
 def get_items(db: sqlite3.Connection = Depends(get_db)):
     # # JSON implementation
@@ -262,4 +267,3 @@ def hash_image(image):
         image_hash = hashlib.sha256(image_bytes).hexdigest()
         image_hash = image_hash + ".jpg"
     return image_hash
-
