@@ -129,6 +129,11 @@ async def add_item(
     
     return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={hashed_image}"})
 
+    # insert_item_json(Item(name=name, category=category, image=image))
+    insert_item_db(db, Item(name=name, category=category, image=image))
+    
+    return AddItemResponse(**{"message": f"item received: name={name}, category={category}, image={image}"})
+
 @app.get("/items", response_model=GetItemResponse)
 def get_items(db: sqlite3.Connection = Depends(get_db)):
     # # JSON implementation
@@ -267,5 +272,3 @@ async def hash_image(image):
     with open(file_path, "wb") as buffer:
         buffer.write(image_bytes)
     return image_hash
-
-    # test
